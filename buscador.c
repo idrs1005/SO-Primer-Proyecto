@@ -2,14 +2,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "nodo.h"
 #include "buscador.h"
 
 
-int main()
-{   
-        calcularFilasyColumnas();
+int main(int argc, char *argv[])
+{
+	//Se le envía el archivo .txt por parámetros
+        calcularFilasyColumnas(argv[1]);
 
         laberinto = malloc( filas * columnas * sizeof(struct nodo )); 
         

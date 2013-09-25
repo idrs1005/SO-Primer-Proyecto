@@ -18,7 +18,7 @@ void *moverseAbajo(void *parametros);
 void *moverseIzquierda(void *parametros);
 void *moverseDerecha(void *parametros);
 
-void calcularFilasyColumnas();
+void calcularFilasyColumnas(char *archivo);
 void llenar_laberinto(struct nodo **laberinto);
 
 
@@ -628,34 +628,37 @@ revisarDerecha(int i, int j, int filas, int columnas)
 }
 
 
-void calcularFilasyColumnas()
+void calcularFilasyColumnas(char *archivo)
 {
 	int c;
-    FILE *file;
-    file = fopen("Prueba.txt", "r");
-    if (file) {
-        while ((c = getc(file)) != EOF)
-        {
-            if(c == '*')
-            {
-                columnas++;
-            }
-            if (c == '/')
-            {
-                columnas++;
-            }
-            if (c == '\n')
-            {
-                columnas = 0;
-                filas++;
-            }
-            if (c == ' ')
-            {
-                columnas++;
-            }
-        }
-    }
-    fclose(file);
+	
+	FILE *file;
+	file = fopen(archivo, "r");
+	if (file) 
+	{
+		while ((c = getc(file)) != EOF)
+		{
+		    if(c == '*')
+		    {
+			columnas++;
+		    }
+		    if (c == '/')
+		    {
+			columnas++;
+		    }
+		    if (c == '\n')
+		    {
+			columnas = 0;
+			filas++;
+		    }
+		    if (c == ' ')
+		    {
+			columnas++;
+		    }
+		}
+	}
+	fclose(file);
+    
 }
 
 void llenar_laberinto(struct nodo **laberinto)
