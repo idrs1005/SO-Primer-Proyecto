@@ -1,4 +1,13 @@
-//erikams79@gmail.com
+/*
+ Sistemas Operativos, Hilos con Pthread
+ Daniel Cortés Sáenz, Isaac Ramírez Solano
+ Enviar tarea a: erikams79@gmail.com
+ Para correr la tarea:
+	-make
+	-./buscador nombreArchivoLaberinto.txt
+*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
