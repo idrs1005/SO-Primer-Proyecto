@@ -50,9 +50,8 @@ void imprimirlaberinto()
           {
               for (j = 0; j < columnas; j++)
               {
-                  printf("%d,%d,%d,%d,%d    ", laberinto[i + j *columnas]->arriba, laberinto[i + j *columnas]->abajo,
-                          laberinto[i + j *columnas]->izquierda, laberinto[i + j *columnas]->derecha, laberinto[i + j*columnas
-                            ]->casilla);
+                  printf("%d,%d,%d,%d    ", laberinto[i + j *columnas]->arriba, laberinto[i + j *columnas]->abajo,
+                          laberinto[i + j *columnas]->izquierda, laberinto[i + j *columnas]->derecha);
               }
               printf("\n");
           }
