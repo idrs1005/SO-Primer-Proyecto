@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
         laberinto = malloc( filas * columnas * sizeof(struct nodo )); 
         
-        llenar_laberinto(laberinto);
+        llenar_laberinto(laberinto, argv[1]);
 
         //Inicia los movimientos
         struct nodo *nodoDerecha;

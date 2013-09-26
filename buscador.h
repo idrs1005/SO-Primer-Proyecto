@@ -19,7 +19,7 @@ void *moverseIzquierda(void *parametros);
 void *moverseDerecha(void *parametros);
 
 void calcularFilasyColumnas(char *archivo);
-void llenar_laberinto(struct nodo **laberinto);
+void llenar_laberinto(struct nodo **laberinto, char *archivo);
 
 
 /******************************/
@@ -46,12 +46,13 @@ void imprimirlaberinto()
       if (semaforo)
       {
           semaforo = 0;
-          for (i = 0; i < 4; i++)
+          for (i = 0; i < filas; i++)
           {
-              for (j = 0; j < 4; j++)
+              for (j = 0; j < columnas; j++)
               {
-                  printf("%d,%d,%d,%d    ", laberinto[i + j *4]->arriba, laberinto[i + j *4]->abajo,
-                          laberinto[i + j *4]->izquierda, laberinto[i + j *4]->derecha);
+                  printf("%d,%d,%d,%d,%d    ", laberinto[i + j *columnas]->arriba, laberinto[i + j *columnas]->abajo,
+                          laberinto[i + j *columnas]->izquierda, laberinto[i + j *columnas]->derecha, laberinto[i + j*columnas
+                            ]->casilla);
               }
               printf("\n");
           }
@@ -98,12 +99,13 @@ void *moverseArriba(void *parametros)
           int derecha = revisarDerecha(i , j ,filas, columnas);
           int izquierda = revisarIzquierda(i , j ,filas, columnas);
           printf("Arriba = %d, derecha = %d, izquierda = %d\n\n", arriba, derecha, izquierda);
-          sleep(5);
+          sleep(2);
           p->paso_casillas = cantidad_de_movimientos;
           movimiento_de_arriba(derecha, izquierda, i, j, p);                  
           if (arriba == 2)
           {
               //LLEGO AL DESTINO
+              printf("El hilo llego, la cantidad de movimientos fueron %d\n", cantidad_de_movimientos);
               laberinto[(i-1) + j * columnas]->arriba = 1;
               pthread_exit(0); 
           }
@@ -159,13 +161,14 @@ void *moverseAbajo(void *parametros)
           int derecha = revisarDerecha(i , j ,filas, columnas);
           int izquierda = revisarIzquierda(i , j ,filas, columnas);
           printf("Abajo = %d, derecha = %d, izquierda = %d\n\n", abajo, derecha, izquierda);
-          sleep(5);
+          sleep(2);
           p->paso_casillas = cantidad_de_movimientos;
           movimiento_de_abajo(derecha, izquierda, i, j, p);
           if (abajo == 2)
           {
               //LLEGO AL DESTINO
-              laberinto[(i+1) + j * columnas]->abajo = 1; 
+              laberinto[(i+1) + j * columnas]->abajo = 1;
+              printf("El hilo llego, la cantidad de movimientos fueron %d\n", cantidad_de_movimientos);
               pthread_exit(0); 
           }
           else if (abajo == 1)
@@ -221,12 +224,13 @@ void *moverseIzquierda(void *parametros)
           int arriba = revisarArriba(i , j ,filas, columnas);
           int abajo = revisarAbajo(i , j ,filas, columnas);
           printf("Izquierda = %d, arriba = %d, abajo = %d\n\n", izquierda, arriba, abajo);
-          sleep(5);
+          sleep(2);
           p->paso_casillas = cantidad_de_movimientos;
           movimiento_de_izquierda(arriba, abajo, i, j, p);
           if (izquierda == 2)
           {
               //LLEGO AL DESTINO
+              printf("El hilo llego, la cantidad de movimientos fueron %d\n", cantidad_de_movimientos);
               laberinto[i + (j-1) * columnas]->izquierda = 1;
               pthread_exit(0); 
           }
@@ -282,12 +286,13 @@ void *moverseDerecha(void *parametros)
           int arriba = revisarArriba(i , j ,filas, columnas);
           int abajo = revisarAbajo(i , j ,filas, columnas);
           printf("Derecha = %d, arriba = %d, abajo = %d\n\n", derecha, arriba, abajo);
-          sleep(5);
+          sleep(2);
           p->paso_casillas = cantidad_de_movimientos;
           movimiento_de_derecha(arriba, abajo, i, j, p);
           if (derecha == 2)
           {
               //LLEGO AL DESTINO
+              printf("El hilo llego, la cantidad de movimientos fueron %d\n", cantidad_de_movimientos);
               laberinto[i + (j+1) * columnas]->derecha = 1;
               pthread_exit(0); 
           }
@@ -321,23 +326,23 @@ void movimiento_de_arriba(int derecha, int izquierda, int i, int j, struct param
     parametroIz.columnas = p->columnas;
     parametroIz.paso_casillas = p->paso_casillas;
 
-    if (derecha == 1)
+    if (derecha > 0)
     {
         parametroDe.i = i;
         parametroDe.j = j+1;
         pthread_create(&thread_derecha, NULL, moverseDerecha, ( void *)&parametroDe);
     }
-    if (izquierda == 1)
+    if (izquierda > 0)
     {
         parametroIz.i = i;
         parametroIz.j = j-1;
         pthread_create(&thread_izquierda, NULL, moverseIzquierda, ( void *)&parametroIz);
     }
-    if (derecha == 1)
+    if (derecha > 0)
     {      
         pthread_join(thread_derecha, NULL);
     }
-    if (izquierda == 1)
+    if (izquierda > 0)
     {    
         pthread_join(thread_izquierda, NULL);
     }
@@ -358,23 +363,23 @@ void movimiento_de_abajo(int derecha, int izquierda, int i, int j, struct parame
     parametroIz.columnas = p->columnas;
     parametroIz.paso_casillas = p->paso_casillas;
 
-    if (derecha == 1)
+    if (derecha > 0)
     {
         parametroDe.i = i;
         parametroDe.j = j+1;
         pthread_create(&thread_derecha, NULL, moverseDerecha, ( void *)&parametroDe);        
     }
-    if (izquierda == 1)
+    if (izquierda > 0)
     {
         parametroIz.i = i;
         parametroIz.j = j-1;
         pthread_create(&thread_izquierda, NULL, moverseIzquierda, ( void *)&parametroIz);       
     }
-    if (derecha == 1)
+    if (derecha > 0)
     {
         pthread_join(thread_derecha, NULL);
     }
-    if (izquierda == 1)
+    if (izquierda > 0)
     {
         pthread_join(thread_izquierda, NULL);
     }
@@ -395,23 +400,23 @@ void movimiento_de_izquierda(int arriba, int abajo, int i, int j, struct paramet
     parametroAb.columnas = p->columnas;
     parametroAb.paso_casillas = p->paso_casillas;
 
-    if (arriba == 1)
+    if (arriba > 0)
     {
         parametroAr.i = i-1;
         parametroAr.j = j;
         pthread_create(&thread_arriba, NULL, moverseArriba, ( void *)&parametroAr);
     }
-    if (abajo == 1)
+    if (abajo > 0)
     {
         parametroAb.i = i+1;
         parametroAb.j = j;
         pthread_create(&thread_abajo, NULL, moverseAbajo, ( void *)&parametroAb);    
     }
-    if (arriba == 1)
+    if (arriba > 0)
     {      
         pthread_join(thread_arriba, NULL);
     }
-    if (abajo == 1)
+    if (abajo > 0)
     {    
         pthread_join(thread_abajo, NULL);
     }
@@ -432,23 +437,23 @@ void movimiento_de_derecha(int arriba, int abajo, int i, int j, struct parametro
     parametroAb.columnas = p->columnas;
     parametroAb.paso_casillas = p->paso_casillas;
 
-    if (arriba == 1)
+    if (arriba > 0)
     {
         parametroAr.i = i-1;
         parametroAr.j = j;
         pthread_create(&thread_arriba, NULL, moverseArriba, ( void *)&parametroAr);
     }
-    if (abajo == 1)
+    if (abajo > 0)
     {
         parametroAb.i = i+1;
         parametroAb.j = j;
         pthread_create(&thread_abajo, NULL, moverseAbajo, ( void *)&parametroAb);
     }
-    if (arriba == 1)
+    if (arriba > 0)
     {       
         pthread_join(thread_arriba, NULL);
     }
-    if (abajo == 1)
+    if (abajo > 0)
     {         
         pthread_join(thread_abajo, NULL);
     }
@@ -481,7 +486,7 @@ int revisarArriba(int i, int j, int filas, int columnas)
             //invalida para seguir
             return -1;
         }
-        else if(info == 2)
+        else if(casilla == 2)
         {
             return 2;
         }
@@ -524,7 +529,7 @@ int revisarAbajo(int i, int j, int filas, int columnas)
             //invalida para seguir
             return -1;
         }
-        else if(info == 2)
+        else if(casilla == 2)
         {
             return 2;
         }
@@ -567,7 +572,7 @@ int revisarIzquierda(int i, int j, int filas, int columnas)
             //invalida para seguir
             return -1;
         }
-        else if(info == 2)
+        else if(casilla == 2)
         {
             return 2;
         }
@@ -610,7 +615,7 @@ revisarDerecha(int i, int j, int filas, int columnas)
             //invalida para mover
             return -1;
         }
-        else if(info == 2)
+        else if(casilla == 2)
         {
             return 2;
         }
@@ -661,11 +666,11 @@ void calcularFilasyColumnas(char *archivo)
     
 }
 
-void llenar_laberinto(struct nodo **laberinto)
+void llenar_laberinto(struct nodo **laberinto, char *archivo)
 {
 	int c;
 	FILE *file;
-    file = fopen("Prueba.txt", "r");
+    file = fopen(archivo, "r");
     int i = 0;
     int j = 0;
     if (file) 
